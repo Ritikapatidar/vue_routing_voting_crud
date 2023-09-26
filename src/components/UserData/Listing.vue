@@ -10,7 +10,7 @@ const allUsers = ref([])
 const newUserData = ref([])
 const hobbiesArr = ['Chess', 'Badminton', 'Hockey', 'Reading']
 const { setLocalStorageData } = useData()
-const search = ref({ firstName: '', lastName: '', city: '', state: '', gender: '', hobbies: [], startAge: 0, MaxAge: 0 })
+const search = ref({ city: '', state: '', gender: '', hobbies: [], startAge: 0, MaxAge: 0 })
 onMounted(() => {
     allUsers.value = JSON.parse(localStorage.getItem('userData'))
     newUserData.value = allUsers.value
@@ -32,8 +32,6 @@ const closeDeleteModal = () => {
 const handleSearch = (e) => {
     newUserData.value = allUsers.value.filter((user) => {
         if (
-            (search.value.firstName.length === 0 ? true : user.FirstName.toUpperCase().includes(search.value.firstName.toUpperCase())) &&
-            (search.value.lastName.length === 0 ? true : user.LastName.toUpperCase().includes(search.value.lastName.toUpperCase())) &&
             (search.value.city.length === 0 ? true : user.City.toUpperCase().includes(search.value.city.toUpperCase())) &&
             (search.value.state.length === 0 ? true : user.State.toUpperCase().includes(search.value.state.toUpperCase())) &&
             (search.value.gender.length === 0 ? true : user.Gender.toUpperCase() === search.value.gender.toUpperCase()) &&
@@ -49,14 +47,6 @@ const handleSearch = (e) => {
 <template>
     <div class="container m-auto pt-4 pb-5" v-if="allUsers?.length > 0">
         <div class="row my-2">
-            <div class="col-12 col-sm-6 col-lg-3 my-1">
-                <InputComponent type="text" v-model="search.firstName" name="first_name" id="first_name"
-                    @input="handleSearch($event)" placeholder="Search Based on First Name.." />
-            </div>
-            <div class="col-12 col-sm-6 col-lg-3 my-1">
-                <InputComponent type="text" v-model="search.lastName" name="last_name" id="last_name"
-                    @input="handleSearch($event)" placeholder="Search Based on Last Name.." />
-            </div>
             <div class="col-12 col-sm-6 col-lg-3 my-1">
                 <InputComponent type="text" v-model="search.state" name="state" id="state" @input="handleSearch($event)"
                     placeholder="Search Based on state.." />
