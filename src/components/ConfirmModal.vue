@@ -19,7 +19,7 @@ const handleDel = () => {
                             <button id="confirm" class="btn btn-primary me-2" @click="handleDel">
                                 OK
                             </button>
-                            <button class="btn btn-secondary" @click="closeDeleteModal">
+                            <button class="btn btn-secondary" id="cancel" @click="closeDeleteModal">
                                 Cancel
                             </button>
                         </div>

@@ -117,7 +117,7 @@ const handleSearch = () => {
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-lg-3 my-1">
-                <button @click="handleSearch" class="btn btn-success border ms-auto d-block">Filter</button>
+                <button @click="handleSearch" id="filter" class="btn btn-success border ms-auto d-block">Filter</button>
             </div>
         </div>
         <div class="table-responsive text-nowrap">
