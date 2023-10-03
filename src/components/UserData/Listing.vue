@@ -23,7 +23,7 @@ let searchData = []
 
 // Common function for updating pagination data
 const paginationUpdate = async (arr, page) => {
-    const { totalPages, curPage, newPaginationData, updatePage } = await Pagination(sortData(arr), 7)
+    const { totalPages, curPage, newPaginationData, updatePage } = await Pagination(sortData(arr), 5)
     updatePage(page)
     newUserData.value = newPaginationData.value
     pageObj.value.currentPage = curPage
