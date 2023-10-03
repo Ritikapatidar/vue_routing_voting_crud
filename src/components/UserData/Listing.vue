@@ -68,7 +68,7 @@ const handleDelete = (id) => {
     let d = allUsers.value.filter((user) => user.Id !== id)
     allUsers.value = d
     paginationUpdate(d, pageObj.value.currentPage)
-    setLocalStorageData(newUserData.value)
+    setLocalStorageData(d)
 }
 // Close Delete Modal
 const closeDeleteModal = () => {
