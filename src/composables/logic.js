@@ -6,6 +6,7 @@ export default function useData() {
         arr?.sort((a, b) => {
             return a.FirstName.toUpperCase() === b.FirstName.toUpperCase() ? 0 : a.FirstName.toUpperCase() > b.FirstName.toUpperCase() ? 1 : -1
         })
+        return arr
     }
     return { setLocalStorageData, sortData }
 }

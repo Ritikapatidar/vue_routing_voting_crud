@@ -35,7 +35,7 @@ const rules = computed(() => ({
     Age: {
         required: helpers.withMessage("Age Required *", required),
         minValue: helpers.withMessage("Not Eligible", minValue(18)),
-        maxValue: helpers.withMessage("Not Eligible", maxValue(100)),
+        maxValue: helpers.withMessage("Not Eligible", maxValue(120)),
     },
     Hobbies: {
         required: helpers.withMessage("Please select hobby*", required)

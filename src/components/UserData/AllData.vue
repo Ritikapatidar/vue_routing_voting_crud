@@ -1,3 +1,7 @@
+
+import { Suspense } from 'vue';
 <template>
-    <router-view/>
+    <Suspense>
+        <router-view />
+    </Suspense>
 </template>

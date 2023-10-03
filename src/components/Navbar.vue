@@ -16,6 +16,6 @@
 </template>
 <style>
 .router-link-exact-active {
-    background-color: rgb(33, 107, 53);
+    background-color: rgb(34, 129, 151);
 }
 </style>
