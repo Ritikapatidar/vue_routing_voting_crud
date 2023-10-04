@@ -4,10 +4,10 @@
             <nav class="navbar navbar-expand navbar-dark bg-dark">
                 <ul class="navbar-nav">
                     <li class="nav-item ms-2 me-3">
-                        <router-link to="/Home" class="nav-link text-light rounded">Home</router-link>
+                        <router-link to="/" class="nav-link text-light rounded">Home</router-link>
                     </li>
                     <li class="nav-item ms-2 me-3">
-                        <router-link to="/userData" class="nav-link text-light rounded">User Data</router-link>
+                        <router-link to="/userdata" class="nav-link text-light rounded">User Data</router-link>
                     </li>
                 </ul>
             </nav>

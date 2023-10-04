@@ -5,11 +5,6 @@ import AllData from '../components/UserData/AllData.vue'
 const routes = [
     {
         path: '/',
-        name: '',
-        component: AllData
-    },
-    {
-        path: '/Home',
         name: 'register',
         component: Registration
     },
@@ -19,7 +14,7 @@ const routes = [
         component: AllData,
         children: [
             {
-                path: '/userData',
+                path: '/userdata',
                 name: 'listing',
                 component: Listing,
             },

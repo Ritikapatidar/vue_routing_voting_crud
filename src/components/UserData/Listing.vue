@@ -1,11 +1,11 @@
 <script setup>
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, onMounted } from 'vue';
 import ConfirmModal from '../ConfirmModal.vue'
 import useData from '../../composables/logic';
-import stateCity from '../../assets/stateCities.json'
+import stateCityArea from '../../assets/indianStateandAreawithcode.json'
 import Pagination from '../../composables/Pagination';
 import PaginationLink from '../PaginationLink.vue'
-
+import TableHeaderVue from './TableHeader.vue';
 defineProps(['data', 'handleEdit'])
 const { setLocalStorageData, sortData } = useData()
 const deleteModal = ref({ isModalVisible: false, deleteIndex: null })
@@ -14,10 +14,11 @@ const newUserData = ref([])
 const hobbiesArr = ['Chess', 'Badminton', 'Hockey', 'Reading']
 const cityList = ref([])
 const stateList = ref([])
-const filter = ref({ city: '', state: '', gender: '', hobbies: [], minAge: 0, maxAge: 0, Age: 0 })
+const areaList = ref([])
+const filter = ref({ city: '', state: '', area: '', gender: '', hobbies: [], minAge: 0, maxAge: 0, Age: 0 })
 const searchName = ref('')
 const pageObj = ref({ currentPage: 0, totalPage: 0, pageSize: 0 })
-
+const sort = ref({ field: '', sortType: '' })
 let filteredData = []
 let searchData = []
 
@@ -31,7 +32,7 @@ const paginationUpdate = async (arr, page) => {
 }
 
 onMounted(async () => {
-    let data = await JSON.parse(localStorage.getItem('userData1'))
+    let data = await JSON.parse(localStorage.getItem('userData'))
     allUsers.value = data
     paginationUpdate(data, pageObj.value.currentPage)
 
@@ -40,22 +41,20 @@ onMounted(async () => {
     filter.value.Age = Math.max.apply(0, ages)
 
     // Set state list
-    Object.keys(stateCity).map((state) => {
-        stateList.value.push({ value: state, text: state })
-    })
-    // Set city list
-    Object.values(stateCity).map((c) => {
-        cityList.value.push(...c)
+    stateList.value = stateCityArea.filter((s) => {
+        return s.parentId === null
     })
 })
 
 // Update Pagination Page
 const updatePagee = async (page) => {
     (!searchName.value) && (searchData = allUsers.value);
-    (!filter.value.city && !filter.value.state && !filter.value.gender && filter.value.hobbies.length === 0 && filter.value.minAge === 0 && filter.value.maxAge === 0) && (filteredData = allUsers.value)
+    (!filter.value.city && !filter.value.state && !filter.value.area && !filter.value.gender && filter.value.hobbies.length === 0 && filter.value.minAge === 0 && filter.value.maxAge === 0) && (filteredData = allUsers.value)
 
     let commonData = filteredData.filter((d) => searchData.includes(d))
-    paginationUpdate(commonData, page)
+    newUserData.value = commonData
+    sortDataField(sort.value.field, sort.value.sortType)
+    paginationUpdate(newUserData.value, page)
 }
 
 // Open Delete Modal
@@ -120,6 +119,45 @@ const handleReset = () => {
         paginationUpdate(allUsers.value, pageObj.value.currentPage)
     }
 }
+
+const sortDataField = (field, sortType) => {
+    sort.value.field = field;
+    sort.value.sortType = sortType;
+    newUserData.value.sort((u1, u2) => {
+        if (sortType) {
+            if (typeof u1[field] === 'string') {
+                return u1[field].toUpperCase() === u2[field].toUpperCase() ? 0 : u1[field].toUpperCase() > u2[field].toUpperCase() ? 1 : -1
+            }
+            else {
+                return u1[field] === u2[field] ? 0 : u1[field] > u2[field] ? 1 : -1
+            }
+        }
+        else {
+            if (typeof u1[field] === 'string') {
+                return u1[field].toUpperCase() === u2[field].toUpperCase() ? 0 : u1[field].toUpperCase() < u2[field].toUpperCase() ? 1 : -1
+            }
+            else {
+                return u1[field] === u2[field] ? 0 : u1[field] < u2[field] ? 1 : -1
+            }
+        }
+    })
+}
+
+const handleStateChange = (e) => {
+    if (e) {
+        let stateObj = stateCityArea.find(state => state.name === e)
+        filter.value.city = ''
+        filter.value.area = ''
+        cityList.value = stateCityArea.filter((city) => city.parentId === stateObj.ID)
+    }
+}
+const handleCityChange = (e) => {
+    if (e) {
+        let cityObj = stateCityArea.find(city => city.name === e)
+        filter.value.area = ''
+        areaList.value = stateCityArea.filter((area) => area.parentId === cityObj.ID)
+    }
+}
 </script>
 <template>
     <div class="container m-auto pt-4 pb-5" v-if="allUsers?.length > 0">
@@ -133,15 +171,23 @@ const handleReset = () => {
         <div class="row my-2">
             <h6 class="mb-0 fw-bold">Filters</h6>
             <div class="col-12 col-sm-6 col-lg-3 my-1">
-                <select id="filter-state" class="slectpicker form-select" v-model="filter.state">
+                <select id="filter-state" class="slectpicker form-select" v-model="filter.state"
+                    @change="handleStateChange(filter.state)">
                     <option selected value="">Filter Based on State</option>
-                    <option v-for="state in Object.keys(stateCity).sort()" :value="state">{{ state }}</option>
+                    <option v-for="state of stateList" :value="state.name">{{ state.name }}</option>
                 </select>
             </div>
             <div class="col-12 col-sm-6 col-lg-3 my-1">
-                <select id="filter-city" class="slectpicker form-select" v-model="filter.city">
+                <select id="filter-city" class="slectpicker form-select" v-model="filter.city"
+                    @change="handleCityChange(filter.city)">
                     <option selected value="">Filter Based on City</option>
-                    <option v-for=" city in cityList.sort()" :value="city">{{ city }}</option>
+                    <option v-for=" city in cityList.sort()" :value="city.name">{{ city.name }}</option>
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3 my-1">
+                <select id="filter-city" class="slectpicker form-select" v-model="filter.area">
+                    <option selected value="">Filter Based on Area</option>
+                    <option v-for="area in areaList.sort()" :value="area.name">{{ area.name }}</option>
                 </select>
             </div>
             <div class="col-12 col-sm-6 col-lg-3 my-1">
@@ -176,18 +222,23 @@ const handleReset = () => {
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-lg-3 my-1 text-center">
-                <button @click="handleFilter" id="filter-btn" class="btn btn-success border">Filter</button>
-                <button @click="handleReset" id="filter-reset" class="btn border text-light"
+                <button @click="handleFilter" name="Filter" id="filter-btn" class="btn btn-success border">Filter</button>
+                <button @click="handleReset" name="Reset" id="filter-reset" class="btn border text-light"
                     style="background-color: rgb(34, 129, 151)">Reset
                     <em class="bi bi-arrow-clockwise"></em></button>
             </div>
         </div>
         <div class="table-responsive text-nowrap">
-            <table id="tblOutput" class="table table-striped table-bordered table-hover">
+            <table id="tblOutput" class="table table-striped table-bordered table-hover" v-if="newUserData.length > 0">
                 <thead>
                     <tr>
                         <template v-for="(value, key) of newUserData[0]">
-                            <th v-if="key !== 'Id'">{{ key }}</th>
+                            <th v-if="key !== 'Id'">
+                                {{ key }}
+                                <template v-if="(key !== 'Gender') && (key !== 'Hobbies')">
+                                    <TableHeaderVue :type="key" :sortDataField="sortDataField" />
+                                </template>
+                            </th>
                         </template>
                         <th class="text-center">Edit</th>
                         <th class="text-center">Delete</th>
